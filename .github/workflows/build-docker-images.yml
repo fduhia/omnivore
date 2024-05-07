@@ -23,10 +23,12 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
       - name: Build the backend docker image
+        env:
+          IMAGE_NAME: ${{ github.repository }}
         run: |
-          docker build . --file packages/api/Dockerfile --tag "ghcr.io/omnivore-app/backend:${GITHUB_SHA}" --tag ghcr.io/omnivore-app/backend:latest
+          docker build . --file packages/api/Dockerfile --tag "${{ registry }}/${{ env.IMAGE_NAME}}/omnivore-backend:${GITHUB_SHA}" --tag ${{ registry }}/${{ env.IMAGE_NAME}}/omnivore-backend:latest
           docker push ghcr.io/omnivore-app/backend:${GITHUB_SHA}
       - name: Build the content-fetch docker image
         run: |
-          docker build --file packages/content-fetch/Dockerfile . --tag "ghcr.io/omnivore-app/content-fetch:${GITHUB_SHA}" --tag ghcr.io/omnivore-app/content-fetch:latest
-          docker push ghcr.io/omnivore-app/content-fetch:${GITHUB_SHA}
+          docker build --file packages/content-fetch/Dockerfile . --tag "${{ registry }}/${{ env.IMAGE_NAME}}/omnivore-content-fetch:${GITHUB_SHA}" --tag ${{ registry }}/${{ env.IMAGE_NAME}}/omnivore-content-fetch:latest
+          docker push ${{ registry }}/${{ env.IMAGE_NAME}}/omnivore-content-fetch:${GITHUB_SHA}
